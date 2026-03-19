@@ -14,22 +14,21 @@ class DemoContract(models.Model):
     Ví dụ thực tế trong Odoo gốc:
       res.users  _inherits  res.partner
       product.product  _inherits  product.template
+
+    LƯU Ý QUAN TRỌNG:
+    - KHÔNG khai báo lại field 'employee_id' trong class body
+      vì _inherits đã tự tạo Many2one đó rồi
+    - Odoo tự động tạo record demo.employee khi tạo demo.contract
+      (nếu không truyền employee_id sẵn)
     """
     _name = 'demo.contract'
     _description = 'Demo Contract'
 
-    # Đây là "delegation link" - bắt buộc phải có, required=True
-    # Odoo sẽ tự tạo record demo.employee khi tạo demo.contract
+    # _inherits tự động tạo field Many2one tên 'employee_id' trỏ đến demo.employee
+    # KHÔNG cần (và KHÔNG nên) khai báo lại employee_id bên dưới
     _inherits = {'demo.employee': 'employee_id'}
 
-    employee_id = fields.Many2one(
-        'demo.employee',
-        string='Nhân viên',
-        required=True,
-        ondelete='cascade',  # xóa contract => xóa employee luôn
-    )
-
-    # Field riêng của contract - chỉ có trong bảng demo_contract
+    # Field riêng của contract - chỉ lưu trong bảng demo_contract
     contract_date = fields.Date(string='Ngày ký hợp đồng', required=True)
     duration_months = fields.Integer(string='Thời hạn (tháng)', default=12)
     contract_type = fields.Selection([
