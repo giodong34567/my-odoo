@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List view -->
+    <record id="view_demo_employee_list" model="ir.ui.view">
+        <field name="name">demo.employee.list</field>
+        <field name="model">demo.employee</field>
+        <field name="arch" type="xml">
+            <list string="Nhân viên">
+                <field name="name"/>
+                <field name="department"/>
+                <field name="salary" widget="monetary" options="{'currency_field': False}"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view -->
+    <record id="view_demo_employee_form" model="ir.ui.view">
+        <field name="name">demo.employee.form</field>
+        <field name="model">demo.employee</field>
+        <field name="arch" type="xml">
+            <form string="Nhân viên">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="department"/>
+                        <field name="salary"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action mở wizard từ menu -->
+    <record id="action_salary_summary_wizard" model="ir.actions.act_window">
+        <field name="name">Tổng hợp lương</field>
+        <field name="res_model">salary.summary.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Action danh sách nhân viên -->
+    <record id="action_demo_employee" model="ir.actions.act_window">
+        <field name="name">Nhân viên Demo</field>
+        <field name="res_model">demo.employee</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_demo_transient_root"
+              name="Demo Transient"
+              sequence="100"/>
+
+    <menuitem id="menu_demo_employee"
+              name="Nhân viên"
+              parent="menu_demo_transient_root"
+              action="action_demo_employee"
+              sequence="1"/>
+
+    <menuitem id="menu_salary_wizard"
+              name="Tổng hợp lương (Wizard)"
+              parent="menu_demo_transient_root"
+              action="action_salary_summary_wizard"
+              sequence="2"/>
+</odoo>

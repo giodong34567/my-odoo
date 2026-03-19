@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Thêm Đề xuất mua sắm vào menu Mua hàng (Purchase) có sẵn -->
+    <menuitem id="menu_purchase_proposal"
+              name="Đề xuất mua sắm"
+              parent="purchase.menu_purchase_root"
+              action="action_purchase_proposal"
+              sequence="5"
+              groups="purchase_custom.group_purchase_custom_proposer,base.group_system"/>
+
+</odoo>
