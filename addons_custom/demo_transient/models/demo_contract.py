@@ -24,9 +24,18 @@ class DemoContract(models.Model):
     _name = 'demo.contract'
     _description = 'Demo Contract'
 
-    # _inherits tự động tạo field Many2one tên 'employee_id' trỏ đến demo.employee
-    # KHÔNG cần (và KHÔNG nên) khai báo lại employee_id bên dưới
+    # _inherits yêu cầu khai báo tường minh Many2one field làm "delegation link"
+    # Odoo 18 bắt buộc field này phải được định nghĩa trong class
     _inherits = {'demo.employee': 'employee_id'}
+
+    # "Delegation link" - bắt buộc phải khai báo tường minh trong Odoo 18
+    # Khi tạo demo.contract mà không truyền employee_id,
+    # Odoo sẽ tự động tạo record demo.employee mới và gán vào đây
+    employee_id = fields.Many2one(
+        'demo.employee',
+        string='Nhân viên',
+        ondelete='cascade',  # xóa contract => xóa employee delegate theo
+    )
 
     # Field riêng của contract - chỉ lưu trong bảng demo_contract
     contract_date = fields.Date(string='Ngày ký hợp đồng', required=True)
@@ -37,6 +46,7 @@ class DemoContract(models.Model):
         ('probation', 'Thử việc'),
     ], string='Loại hợp đồng', required=True, default='fulltime')
     note = fields.Text(string='Ghi chú')
+
 
     # Nhờ _inherits, các field sau đây của demo.employee
     # có thể truy cập trực tiếp trên demo.contract:
