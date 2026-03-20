@@ -7,6 +7,7 @@
     'data': [
         'security/demo_groups.xml',
         'security/ir.model.access.csv',
+        'data/demo_sequence.xml',
         'views/demo_employee_views.xml',
         'views/demo_contract_views.xml',
         'views/salary_summary_wizard_views.xml',

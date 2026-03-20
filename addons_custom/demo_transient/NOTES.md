@@ -473,3 +473,63 @@ def write(self, vals):
 - `create` nhận `vals_list` (list of dict) từ Odoo 16+, không phải dict đơn
 - Luôn `return super()` — không return sẽ trả về `None`, gây lỗi khó debug
 - `write` nhận 1 `vals` dict cho toàn bộ recordset, không loop vals
+
+---
+
+## 16. ir.sequence — Tự sinh mã
+
+Định nghĩa sequence trong XML:
+```xml
+<record id="seq_my_model" model="ir.sequence">
+    <field name="name">My Model Sequence</field>
+    <field name="code">my.model</field>
+    <field name="prefix">ORD/%(year)s/%(month)s/</field>
+    <field name="padding">4</field>
+    <!-- => ORD/2026/03/0001, ORD/2026/03/0002, ... -->
+</record>
+```
+
+Dùng trong `create()`:
+```python
+@api.model_create_multi
+def create(self, vals_list):
+    for vals in vals_list:
+        if vals.get('name', 'New') == 'New':
+            vals['name'] = self.env['ir.sequence'].next_by_code('my.model') or 'New'
+    return super().create(vals_list)
+```
+
+**Prefix variables:** `%(year)s`, `%(month)s`, `%(day)s`, `%(y)s` (2 chữ số năm)
+
+---
+
+## 17. mail.thread — Chatter & Tracking
+
+```python
+class MyModel(models.Model):
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    state  = fields.Selection([...], tracking=True)  # tự log khi thay đổi
+    amount = fields.Float(tracking=True)
+```
+
+Ghi log thủ công vào chatter:
+```python
+# Internal note (chỉ nội bộ thấy)
+self.message_post(
+    body='Đã xử lý xong',
+    subtype_xmlid='mail.mt_note',
+)
+
+# Comment (notify followers)
+self.message_post(
+    body='Hoàn thành đơn hàng',
+    subtype_xmlid='mail.mt_comment',
+)
+```
+
+| | `mt_note` | `mt_comment` |
+|--|--|--|
+| Hiển thị | Chatter | Chatter |
+| Notify followers | Không | Có |
+| Dùng khi | Log nội bộ | Thông báo ra ngoài |

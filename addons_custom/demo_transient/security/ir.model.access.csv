@@ -10,3 +10,4 @@ access_demo_sudo_context_admin,demo.sudo.context.admin,model_demo_sudo_context,d
 access_demo_query_admin,demo.query.admin,model_demo_query,demo_transient.group_demo_admin,1,1,1,1
 access_demo_model_tricks_admin,demo.model.tricks.admin,model_demo_model_tricks,demo_transient.group_demo_admin,1,1,1,1
 access_demo_name_write_admin,demo.name.write.admin,model_demo_name_write,demo_transient.group_demo_admin,1,1,1,1
+access_demo_sequence_mail_admin,demo.sequence.mail.admin,model_demo_sequence_mail,demo_transient.group_demo_admin,1,1,1,1
