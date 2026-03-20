@@ -263,3 +263,108 @@ demo_transient/
     ├── demo_contract_views.xml
     └── salary_summary_wizard_views.xml
 ```
+
+---
+
+## 11. Truy vấn dữ liệu (ORM + Raw SQL)
+
+### search() — truy vấn cơ bản
+```python
+# Tất cả
+self.env['demo.employee'].search([])
+
+# Có domain + options
+self.env['demo.employee'].search(
+    [('department', '=', 'it'), ('salary', '>=', 10_000_000)],
+    order='salary desc', limit=10, offset=0,
+)
+```
+
+**Toán tử domain hay dùng:**
+| Toán tử | Ý nghĩa |
+|---------|---------|
+| `=`, `!=`, `<`, `>` | So sánh thông thường |
+| `ilike` | Chứa chuỗi, không phân biệt hoa thường |
+| `in`, `not in` | Trong danh sách |
+| `child_of` | Tìm theo cây (parent) |
+| `\|` / `&` / `!` | OR / AND / NOT (prefix) |
+
+```python
+# OR: tìm IT hoặc lương > 20tr
+['\|', ('department', '=', 'it'), ('salary', '>', 20_000_000)]
+```
+
+### search_count() — đếm không load record
+```python
+# Hiệu quả hơn len(search(...))
+count = self.env['demo.employee'].search_count([('department', '=', 'it')])
+```
+
+### browse() — lấy record theo id
+```python
+emp = self.env['demo.employee'].browse(1)       # lazy load, không query ngay
+emps = self.env['demo.employee'].browse([1, 2]) # nhiều record
+```
+
+### filtered / mapped / sorted — thao tác trên recordset
+```python
+employees = self.env['demo.employee'].search([])
+
+# filtered: lọc trong Python
+seniors = employees.filtered(lambda e: e.total_salary > 20_000_000)
+it_team = employees.filtered_domain([('department', '=', 'it')])  # Odoo 15+
+
+# mapped: lấy giá trị field
+names  = employees.mapped('name')           # => ['An', 'Bình']
+totals = employees.mapped('total_salary')   # => [15000000, ...]
+
+# sorted: sắp xếp trong Python
+top = employees.sorted('salary', reverse=True)
+```
+
+### read_group() — GROUP BY
+```python
+# Tổng hợp không cần load từng record
+result = self.env['demo.employee'].read_group(
+    domain=[],
+    fields=['department', 'salary:sum', 'salary:avg'],
+    groupby=['department'],
+)
+# => [{'department': 'it', 'salary': 45_000_000, 'department_count': 3}, ...]
+```
+
+### read() — lấy dict thay vì recordset
+```python
+# Nhanh hơn khi chỉ cần vài field, không cần full record object
+data = self.env['demo.employee'].search([]).read(['name', 'salary'])
+# => [{'id': 1, 'name': 'An', 'salary': 15000000}, ...]
+```
+
+### exists() — kiểm tra record còn tồn tại không
+```python
+emp = self.env['demo.employee'].browse(9999)
+if not emp.exists():
+    return "Không tồn tại"
+```
+
+### Raw SQL — self.env.cr
+Dùng khi ORM không đủ (window function, CTE, bulk update...).
+
+```python
+cr = self.env.cr
+
+# SELECT
+cr.execute("""
+    SELECT id, name, salary FROM demo_employee
+    WHERE department = %s AND salary > %s
+""", ('it', 10_000_000))
+
+rows = cr.fetchall()      # list of tuples
+rows = cr.dictfetchall()  # list of dicts ← tiện hơn
+
+# UPDATE bulk — bypass ORM, không trigger compute/onchange
+cr.execute("UPDATE demo_employee SET allowance = %s WHERE department = %s",
+           (500_000, 'hr'))
+```
+
+> ⚠️ Luôn dùng `%s` placeholder, **không bao giờ** f-string/format trực tiếp vào SQL — tránh SQL injection.
