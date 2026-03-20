@@ -533,3 +533,31 @@ self.message_post(
 | Hiển thị | Chatter | Chatter |
 | Notify followers | Không | Có |
 | Dùng khi | Log nội bộ | Thông báo ra ngoài |
+
+---
+
+## 18. _order & _parent_store
+
+### _order — sắp xếp mặc định
+```python
+_order = 'sequence, name'        # tăng dần
+_order = 'create_date desc, id'  # giảm dần
+```
+Áp dụng cho mọi `search()` mà không cần truyền `order=` mỗi lần.
+
+### _parent_store — cấu trúc cây
+```python
+_parent_store = True  # bật nested set, query cây cực nhanh
+
+parent_id   = fields.Many2one('demo.hierarchy', ondelete='restrict')
+parent_path = fields.Char(index=True)  # Odoo tự quản lý, không sửa tay
+child_ids   = fields.One2many('demo.hierarchy', 'parent_id')
+```
+
+Tìm toàn bộ cây con bằng `child_of`:
+```python
+# Lấy node + tất cả con cháu của node id=5
+self.env['demo.hierarchy'].search([('parent_id', 'child_of', 5)])
+```
+
+> Ví dụ thực tế: `product.category`, `account.account`, `hr.department`
