@@ -561,3 +561,32 @@ self.env['demo.hierarchy'].search([('parent_id', 'child_of', 5)])
 ```
 
 > Ví dụ thực tế: `product.category`, `account.account`, `hr.department`
+
+---
+
+## 19. ir.cron — Tác vụ tự động (Scheduled Actions)
+
+Định nghĩa trong XML:
+```xml
+<record id="ir_cron_demo" model="ir.cron">
+    <field name="name">Demo: Cập nhật thống kê</field>
+    <field name="model_id" ref="model_demo_cron"/>
+    <field name="state">code</field>
+    <field name="code">model.action_cron_job()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>  <!-- minutes/hours/days/weeks/months -->
+    <field name="numbercall">-1</field>        <!-- -1 = chạy mãi mãi -->
+    <field name="active">True</field>
+</record>
+```
+
+Method trong Python:
+```python
+def action_cron_job(self):
+    # Cron chạy với user __system__, nên sudo() nếu cần
+    records = self.sudo().search([])
+    # xử lý...
+    _logger.info("Cron chạy xong: %d records", len(records))
+```
+
+> Xem/chỉnh cron trên UI: Settings > Technical > Scheduled Actions
