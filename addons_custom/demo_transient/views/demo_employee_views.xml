@@ -8,7 +8,12 @@
             <list string="Nhân viên">
                 <field name="name"/>
                 <field name="department"/>
-                <field name="salary" widget="monetary" options="{'currency_field': False}"/>
+                <field name="salary"/>
+                <field name="allowance"/>
+                <field name="total_salary"/>
+                <field name="salary_level"/>
+                <field name="join_date"/>
+                <field name="years_of_service"/>
             </list>
         </field>
     </record>
@@ -20,11 +25,28 @@
         <field name="arch" type="xml">
             <form string="Nhân viên">
                 <sheet>
-                    <group>
+                    <group string="Thông tin cá nhân">
                         <field name="name"/>
-                        <field name="department"/>
-                        <field name="salary"/>
+                        <field name="age"/>
+                        <field name="gender"/>
+                        <field name="phone"/>
+                        <field name="email"/>
                     </group>
+                    <group string="Công việc">
+                        <field name="department"/>
+                        <!-- onchange _onchange_department tự điền allowance khi đổi phòng ban -->
+                        <field name="join_date"/>
+                        <field name="years_of_service" readonly="1"/>
+                    </group>
+                    <group string="Lương">
+                        <field name="salary"/>
+                        <field name="allowance"/>
+                        <!-- compute _compute_total_salary (store=True) -->
+                        <field name="total_salary" readonly="1"/>
+                        <!-- compute _compute_salary_level (store=True) -->
+                        <field name="salary_level" readonly="1"/>
+                    </group>
+                    <field name="bio" placeholder="Giới thiệu bản thân..."/>
                 </sheet>
             </form>
         </field>
