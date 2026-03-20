@@ -368,3 +368,45 @@ cr.execute("UPDATE demo_employee SET allowance = %s WHERE department = %s",
 ```
 
 > ⚠️ Luôn dùng `%s` placeholder, **không bao giờ** f-string/format trực tiếp vào SQL — tránh SQL injection.
+
+---
+
+## 12. _sql_constraints — Ràng buộc tầng DB
+
+Nhanh hơn `@api.constrains` vì chạy thẳng ở PostgreSQL, không thể bypass.
+
+```python
+_sql_constraints = [
+    # (tên, định_nghĩa_sql, thông_báo_lỗi)
+    ('unique_code',      'UNIQUE(code)',                    'Mã đã tồn tại.'),
+    ('check_score',      'CHECK(score >= 0 AND score <= 100)', 'Điểm phải 0-100.'),
+    ('unique_name_dept', 'UNIQUE(name, department)',        'Tên trùng trong phòng ban.'),
+]
+```
+
+| | `_sql_constraints` | `@api.constrains` |
+|--|--|--|
+| Tầng | DB (PostgreSQL) | Python |
+| Tốc độ | Nhanh hơn | Chậm hơn |
+| Logic phức tạp | Không | Có |
+| Bypass được không | Không | Có (raw SQL) |
+
+---
+
+## 13. copy() — Kiểm soát Duplicate
+
+Mặc định Odoo copy tất cả field trừ những field có `copy=False`.
+
+```python
+# Field không được copy khi duplicate
+ref_number = fields.Char(copy=False)  # reset về rỗng
+state = fields.Selection(..., copy=False)
+
+# Override copy() để tùy chỉnh
+def copy(self, default=None):
+    default = dict(default or {})
+    default.setdefault('name', f"{self.name} (Copy)")  # đổi tên
+    default.setdefault('code', f"{self.code}-COPY")    # sinh code mới
+    default.setdefault('note', False)                  # xóa ghi chú
+    return super().copy(default)
+```

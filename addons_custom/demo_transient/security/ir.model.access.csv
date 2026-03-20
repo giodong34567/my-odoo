@@ -7,3 +7,5 @@ access_demo_contract_manager,demo.contract.manager,model_demo_contract,demo_tran
 access_demo_contract_admin,demo.contract.admin,model_demo_contract,demo_transient.group_demo_admin,1,1,1,1
 access_salary_summary_wizard,salary.summary.wizard,model_salary_summary_wizard,demo_transient.group_demo_manager,1,1,1,1
 access_demo_sudo_context_admin,demo.sudo.context.admin,model_demo_sudo_context,demo_transient.group_demo_admin,1,1,1,1
+access_demo_query_admin,demo.query.admin,model_demo_query,demo_transient.group_demo_admin,1,1,1,1
+access_demo_model_tricks_admin,demo.model.tricks.admin,model_demo_model_tricks,demo_transient.group_demo_admin,1,1,1,1
