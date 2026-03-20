@@ -8,3 +8,4 @@ from . import demo_sequence_mail
 from . import demo_hierarchy
 from . import demo_cron
 from . import demo_recordset_ops
+from . import demo_sql_view

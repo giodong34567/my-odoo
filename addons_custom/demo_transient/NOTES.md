@@ -671,3 +671,39 @@ return request.make_response(
 ```
 
 > `request.env` là ORM env của user đang đăng nhập — dùng như `self.env` trong model.
+
+---
+
+## 22. _auto = False — SQL View Model
+
+Model không tạo bảng DB, thay vào đó ánh xạ lên một SQL VIEW.
+Dùng cho báo cáo, dashboard tổng hợp từ nhiều bảng.
+
+```python
+class MySaleReport(models.Model):
+    _name = 'my.sale.report'
+    _auto = False   # không tạo bảng
+
+    # field phải khớp tên cột trong VIEW
+    partner_name = fields.Char(readonly=True)
+    total_amount = fields.Float(readonly=True)
+
+    def init(self):
+        # Odoo gọi khi install/update — tạo VIEW tại đây
+        self.env.cr.execute("""
+            CREATE OR REPLACE VIEW my_sale_report AS (
+                SELECT
+                    ROW_NUMBER() OVER () AS id,  -- bắt buộc có cột id
+                    p.name               AS partner_name,
+                    SUM(l.price_total)   AS total_amount
+                FROM sale_order_line l
+                JOIN res_partner p ON p.id = l.order_partner_id
+                GROUP BY p.name
+            )
+        """)
+```
+
+**Lưu ý:**
+- VIEW bắt buộc có cột `id` (dùng `ROW_NUMBER()` nếu không có sẵn)
+- Chỉ `perm_read=1` trong ACL, không write/create/unlink
+- Odoo gốc dùng nhiều: `sale.report`, `account.invoice.report`, `stock.report`
