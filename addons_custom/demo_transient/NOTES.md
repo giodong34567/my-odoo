@@ -627,3 +627,47 @@ rec.ensure_one() # raise UserError nếu len != 1
 # mapped trả về recordset nếu field là quan hệ
 children = parents.mapped('child_ids')  # => recordset, không phải list
 ```
+
+---
+
+## 21. Controller — HTTP Routes
+
+```python
+from odoo import http
+from odoo.http import request
+
+class MyController(http.Controller):
+
+    @http.route('/my/url', type='http', auth='user', methods=['GET'])
+    def my_page(self, **kwargs):
+        return "<h1>Hello</h1>"
+```
+
+**`auth=`**
+| Giá trị | Ý nghĩa |
+|---------|---------|
+| `'user'` | Phải đăng nhập (default) |
+| `'public'` | Ai cũng gọi được |
+| `'none'` | Tự quản lý hoàn toàn |
+
+**`type=`**
+| Giá trị | Dùng khi |
+|---------|---------|
+| `'http'` | Trả về HTML, redirect, file |
+| `'json'` | JSON API — tự parse body, tự wrap `{result: ...}` |
+
+```python
+# JSON route — client POST body: {"department": "it"}
+@http.route('/api/employees', type='json', auth='user', methods=['POST'])
+def get_employees(self, department=None, **kwargs):
+    recs = request.env['demo.employee'].search([('department', '=', department)])
+    return recs.read(['name', 'salary'])  # tự trả về {"result": [...]}
+
+# Trả JSON thủ công từ type='http'
+return request.make_response(
+    json.dumps({'count': 10}),
+    headers=[('Content-Type', 'application/json')],
+)
+```
+
+> `request.env` là ORM env của user đang đăng nhập — dùng như `self.env` trong model.
