@@ -5,6 +5,7 @@
     'category': 'Learning',
     'depends': ['base'],
     'data': [
+        'security/demo_groups.xml',
         'security/ir.model.access.csv',
         'views/demo_employee_views.xml',
         'views/demo_contract_views.xml',

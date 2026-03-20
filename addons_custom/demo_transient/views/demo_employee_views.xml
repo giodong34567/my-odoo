@@ -37,6 +37,7 @@
                         <!-- onchange _onchange_department tự điền allowance khi đổi phòng ban -->
                         <field name="join_date"/>
                         <field name="years_of_service" readonly="1"/>
+                        <field name="user_id"/>
                     </group>
                     <group string="Lương">
                         <field name="salary"/>

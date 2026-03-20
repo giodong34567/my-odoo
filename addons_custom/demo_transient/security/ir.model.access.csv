@@ -1,4 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_demo_employee,demo.employee,model_demo_employee,,1,1,1,1
-access_demo_contract,demo.contract,model_demo_contract,,1,1,1,1
-access_salary_summary_wizard,salary.summary.wizard,model_salary_summary_wizard,,1,1,1,1
+access_demo_employee_employee,demo.employee.employee,model_demo_employee,demo_transient.group_demo_employee,1,0,0,0
+access_demo_employee_manager,demo.employee.manager,model_demo_employee,demo_transient.group_demo_manager,1,1,1,0
+access_demo_employee_admin,demo.employee.admin,model_demo_employee,demo_transient.group_demo_admin,1,1,1,1
+access_demo_contract_employee,demo.contract.employee,model_demo_contract,demo_transient.group_demo_employee,1,0,0,0
+access_demo_contract_manager,demo.contract.manager,model_demo_contract,demo_transient.group_demo_manager,1,1,1,0
+access_demo_contract_admin,demo.contract.admin,model_demo_contract,demo_transient.group_demo_admin,1,1,1,1
+access_salary_summary_wizard,salary.summary.wizard,model_salary_summary_wizard,demo_transient.group_demo_manager,1,1,1,1
