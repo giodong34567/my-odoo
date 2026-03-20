@@ -410,3 +410,66 @@ def copy(self, default=None):
     default.setdefault('note', False)                  # xóa ghi chú
     return super().copy(default)
 ```
+
+---
+
+## 14. _rec_name & display_name
+
+Mặc định Odoo dùng field `name` làm label hiển thị ở Many2one, breadcrumb...
+
+```python
+# Đổi sang field khác
+_rec_name = 'code'
+
+# Hoặc label phức tạp nhiều field => override display_name (Odoo 17+)
+display_name = fields.Char(compute='_compute_display_name', store=False)
+
+@api.depends('code', 'first_name', 'last_name')
+def _compute_display_name(self):
+    for rec in self:
+        rec.display_name = f"{rec.code} - {rec.first_name} {rec.last_name}"
+```
+
+> Odoo 16 trở về trước dùng `name_get()`, từ 17+ chuyển sang compute `display_name`.
+
+---
+
+## 15. Override create() / write()
+
+```python
+@api.model_create_multi
+def create(self, vals_list):
+    for vals in vals_list:
+        # 1. Xử lý vals trước khi tạo
+        if not vals.get('code'):
+            vals['code'] = self.env['ir.sequence'].next_by_code('my.model')
+    
+    records = super().create(vals_list)  # luôn gọi super()
+    
+    # 2. Post-processing sau khi tạo
+    for rec in records:
+        rec._do_something()
+    
+    return records  # luôn return kết quả super()
+
+
+def write(self, vals):
+    # 1. Kiểm tra / chặn trước khi ghi
+    if 'state' in vals:
+        locked = self.filtered(lambda r: r.state == 'done')
+        if locked:
+            raise ValidationError(_('Không thể sửa record đã hoàn thành'))
+    
+    result = super().write(vals)  # luôn gọi super()
+    
+    # 2. Post-processing
+    if 'state' in vals:
+        self._on_state_changed()
+    
+    return result  # luôn return kết quả super()
+```
+
+**Lưu ý quan trọng:**
+- `create` nhận `vals_list` (list of dict) từ Odoo 16+, không phải dict đơn
+- Luôn `return super()` — không return sẽ trả về `None`, gây lỗi khó debug
+- `write` nhận 1 `vals` dict cho toàn bộ recordset, không loop vals
