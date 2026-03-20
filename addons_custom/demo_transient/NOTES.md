@@ -590,3 +590,40 @@ def action_cron_job(self):
 ```
 
 > Xem/chỉnh cron trên UI: Settings > Technical > Scheduled Actions
+
+---
+
+## 20. Recordset Arithmetic — Phép toán tập hợp
+
+Recordset hoạt động như Python set nhưng **giữ thứ tự** và **không trùng lặp**.
+
+```python
+a = self.search([('tag', '=', 'a')])
+b = self.search([('tag', '=', 'b')])
+all_recs = self.search([])
+
+a | b        # union — gộp, loại trùng
+all_recs & a # intersection — chỉ lấy record có trong cả hai
+all_recs - a # difference — lấy record KHÔNG có trong a
+
+rec in a     # True/False — kiểm tra record có trong recordset
+a <= all_recs  # True nếu a là tập con của all_recs
+a == b         # so sánh theo ids
+```
+
+Gom dần vào recordset (accumulator pattern):
+```python
+result = self.env['my.model']   # empty recordset
+for rec in all_recs:
+    if rec.score > 50:
+        result |= rec           # thêm vào tập kết quả
+```
+
+Một vài trick hay:
+```python
+rec.ids          # [1, 2, 3] — không query DB thêm
+rec.ensure_one() # raise UserError nếu len != 1
+
+# mapped trả về recordset nếu field là quan hệ
+children = parents.mapped('child_ids')  # => recordset, không phải list
+```

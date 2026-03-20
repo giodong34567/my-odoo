@@ -13,3 +13,4 @@ access_demo_name_write_admin,demo.name.write.admin,model_demo_name_write,demo_tr
 access_demo_sequence_mail_admin,demo.sequence.mail.admin,model_demo_sequence_mail,demo_transient.group_demo_admin,1,1,1,1
 access_demo_hierarchy_admin,demo.hierarchy.admin,model_demo_hierarchy,demo_transient.group_demo_admin,1,1,1,1
 access_demo_cron_admin,demo.cron.admin,model_demo_cron,demo_transient.group_demo_admin,1,1,1,1
+access_demo_recordset_ops_admin,demo.recordset.ops.admin,model_demo_recordset_ops,demo_transient.group_demo_admin,1,1,1,1
