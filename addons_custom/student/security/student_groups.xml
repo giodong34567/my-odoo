@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        module_category: tạo nhóm danh mục hiển thị trong Settings > Users
+        Đây là thứ làm cho group xuất hiện ở trang cài đặt người dùng
+    -->
+    <record id="module_category_student" model="ir.module.category">
+        <field name="name">Student</field>
+        <field name="description">Quản lý học sinh</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- Cấp 1: Học sinh - chỉ xem thông tin của mình -->
+    <record id="group_student" model="res.groups">
+        <field name="name">Học sinh</field>
+        <field name="category_id" ref="module_category_student"/>
+        <field name="comment">Chỉ xem được thông tin của bản thân</field>
+    </record>
+
+    <!-- Cấp 2: Nhân viên - xem và chỉnh sửa -->
+    <record id="group_student_staff" model="res.groups">
+        <field name="name">Nhân viên</field>
+        <field name="category_id" ref="module_category_student"/>
+        <field name="implied_ids" eval="[(4, ref('group_student'))]"/>
+        <field name="comment">Xem và chỉnh sửa thông tin học sinh</field>
+    </record>
+
+    <!-- Cấp 3: Quản lý - toàn quyền -->
+    <record id="group_student_manager" model="res.groups">
+        <field name="name">Quản lý</field>
+        <field name="category_id" ref="module_category_student"/>
+        <field name="implied_ids" eval="[(4, ref('group_student_staff'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="comment">Toàn quyền quản lý</field>
+    </record>
+</odoo>
