@@ -20,6 +20,27 @@ class Student(models.Model):
     phone = fields.Char(string='Số điện thoại')
     active = fields.Boolean(default=True)
 
+    # ── Ví dụ default động ───────────────────────────────────────
+    # Cách 1: lambda self — dùng khi logic đơn giản, 1 dòng
+    enroll_date = fields.Date(
+        string='Ngày nhập học',
+        default=lambda self: fields.Date.today(),
+    )
+
+    # Cách 2: lambda self gọi method — dùng khi logic phức tạp hơn
+    note = fields.Text(
+        string='Ghi chú',
+        default=lambda self: self._default_note(),
+    )
+
+    def _default_note(self):
+        """
+        Method trả về giá trị default động.
+        self ở đây là model (không phải record cụ thể),
+        nên có thể dùng self.env để truy cập user, company...
+        """
+        return f"Học sinh nhập học năm {fields.Date.today().year} - {self.env.company.name}"
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
