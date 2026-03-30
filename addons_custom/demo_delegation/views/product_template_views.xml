@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_template_list" model="ir.ui.view">
+        <field name="name">demo.product.template.list</field>
+        <field name="model">demo.product.template</field>
+        <field name="arch" type="xml">
+            <list string="Mẫu sản phẩm">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="base_price"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_product_template_form" model="ir.ui.view">
+        <field name="name">demo.product.template.form</field>
+        <field name="model">demo.product.template</field>
+        <field name="arch" type="xml">
+            <form string="Mẫu sản phẩm">
+                <sheet>
+                    <group string="Thông tin chung (bảng demo_product_template)">
+                        <field name="name"/>
+                        <field name="category"/>
+                        <field name="base_price"/>
+                    </group>
+                    <field name="description" placeholder="Mô tả sản phẩm..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_template" model="ir.actions.act_window">
+        <field name="name">Mẫu sản phẩm</field>
+        <field name="res_model">demo.product.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_demo_delegation_root" name="Demo Delegation" sequence="101"/>
+    <menuitem id="menu_product_template"
+              name="Mẫu sản phẩm (CHA)"
+              parent="menu_demo_delegation_root"
+              action="action_product_template"
+              sequence="1"/>
+</odoo>

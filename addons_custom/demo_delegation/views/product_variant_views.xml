@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_variant_list" model="ir.ui.view">
+        <field name="name">demo.product.variant.list</field>
+        <field name="model">demo.product.variant</field>
+        <field name="arch" type="xml">
+            <list string="Biến thể sản phẩm">
+                <!--
+                    name, category, base_price: đến từ demo_product_template
+                    color, size, extra_price, final_price: đến từ demo_product_variant
+                    Nhưng dùng y hệt nhau, không cần phân biệt
+                -->
+                <field name="name" string="Tên mẫu"/>
+                <field name="category"/>
+                <field name="color"/>
+                <field name="size"/>
+                <field name="base_price" string="Giá gốc"/>
+                <field name="extra_price" string="Giá thêm"/>
+                <field name="final_price" string="Giá bán"/>
+                <field name="stock"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_product_variant_form" model="ir.ui.view">
+        <field name="name">demo.product.variant.form</field>
+        <field name="model">demo.product.variant</field>
+        <field name="arch" type="xml">
+            <form string="Biến thể sản phẩm">
+                <sheet>
+                    <!--
+                        GROUP 1: field từ bảng CHA (demo_product_template)
+                        Khi sửa name/base_price ở đây => ghi vào bảng template
+                        => ảnh hưởng TẤT CẢ biến thể cùng template!
+                    -->
+                    <group string="Thông tin mẫu — lưu trong demo_product_template">
+                        <field name="template_id"
+                               help="Chọn mẫu có sẵn, hoặc để trống — Odoo tự tạo mẫu mới khi save"/>
+                        <field name="name" string="Tên sản phẩm"/>
+                        <field name="category"/>
+                        <field name="base_price"/>
+                    </group>
+
+                    <!--
+                        GROUP 2: field từ bảng CON (demo_product_variant)
+                        Sửa ở đây chỉ ảnh hưởng biến thể này
+                    -->
+                    <group string="Thông tin biến thể — lưu trong demo_product_variant">
+                        <field name="color"/>
+                        <field name="size"/>
+                        <field name="extra_price"/>
+                        <field name="stock"/>
+                        <field name="final_price" readonly="1"/>
+                    </group>
+
+                    <field name="description" placeholder="Mô tả..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_variant" model="ir.actions.act_window">
+        <field name="name">Biến thể sản phẩm</field>
+        <field name="res_model">demo.product.variant</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_product_variant"
+              name="Biến thể (CON)"
+              parent="menu_demo_delegation_root"
+              action="action_product_variant"
+              sequence="2"/>
+</odoo>

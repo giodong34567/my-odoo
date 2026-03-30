@@ -8,6 +8,7 @@
         'security/student_groups.xml',
         'security/ir.model.access.csv',
         'data/student_sequence.xml',
+        'data/student_server_actions.xml',
         'views/student_views.xml',
     ],
     'installable': True,
