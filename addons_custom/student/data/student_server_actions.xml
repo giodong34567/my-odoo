@@ -2,30 +2,21 @@
 <odoo>
     <!--
         SERVER ACTION — ir.actions.server
-        Khác với act_window (mở view) hay act_url (mở URL):
-        Server action chạy code Python hoặc gọi method trên model.
-
-        Hay dùng cho:
-        - Nút hành động hàng loạt trong list view (Action menu)
-        - Automation (tự động chạy khi record thay đổi)
-        - Nút trong form chạy logic phức tạp
+        QUAN TRỌNG: code trong <field name="code"> chạy trong sandbox bị giới hạn.
+        Không được dùng: record.field = value  (STORE_ATTR bị cấm)
+        Phải dùng: record.write({'field': value})
     -->
 
-    <!-- Cách 1: binding_model_id => xuất hiện trong menu Action của list view -->
+    <!-- Cách 1: viết code trực tiếp, dùng write() thay vì gán trực tiếp -->
     <record id="action_reset_note" model="ir.actions.server">
         <field name="name">Xóa ghi chú</field>
         <field name="model_id" ref="model_student_student"/>
         <field name="binding_model_id" ref="model_student_student"/>
-        <!-- binding_model_id: gắn action vào model => hiện trong Action menu -->
         <field name="state">code</field>
-        <field name="code">
-# records: tập hợp các record đang được chọn trong list view
-for record in records:
-    record.note = False
-        </field>
+        <field name="code">records.write({'note': False})</field>
     </record>
 
-    <!-- Cách 2: gọi method trên model thay vì viết code trực tiếp -->
+    <!-- Cách 2: gọi method trên model — cách này linh hoạt hơn -->
     <record id="action_mark_senior" model="ir.actions.server">
         <field name="name">Đánh dấu học sinh lớn tuổi</field>
         <field name="model_id" ref="model_student_student"/>

@@ -134,3 +134,31 @@ class Student(models.Model):
         for rec in self:
             if rec.age and rec.age >= 18:
                 rec.note = f"[Lớn tuổi] {rec.note or ''}"
+
+    # ── default_get ───────────────────────────────────────────────
+    @api.model
+    def default_get(self, fields_list):
+        """
+        Gọi khi mở form tạo mới — trả về dict giá trị mặc định.
+
+        fields_list: danh sách field mà form đang cần giá trị mặc định.
+        Luôn gọi super() trước để lấy defaults từ Odoo (context, ir.default...),
+        rồi override thêm giá trị mình muốn.
+        """
+        # Bước 1: lấy defaults từ Odoo (bao gồm default_<field> từ context)
+        defaults = super().default_get(fields_list)
+
+        # Bước 2: override hoặc thêm giá trị theo logic tùy chỉnh
+        if 'enroll_date' in fields_list:
+            defaults['enroll_date'] = fields.Date.today()
+
+        if 'address' in fields_list:
+            # Lấy địa chỉ từ company hiện tại
+            company = self.env.company
+            defaults['address'] = company.city or 'Quảng Trị'
+
+        if 'note' in fields_list:
+            user = self.env.user
+            defaults['note'] = f"Tạo bởi {user.name} lúc {fields.Datetime.now()}"
+
+        return defaults
