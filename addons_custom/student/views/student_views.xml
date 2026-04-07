@@ -21,16 +21,37 @@
         <field name="model">student.student</field>
         <field name="arch" type="xml">
             <form string="Học sinh">
+                <header>
+                    <!-- Mỗi button gọi 1 method trả về window action khác nhau -->
+                    <button name="action_open_form"
+                            string="Mở form (current)"
+                            type="object"/>
+                    <button name="action_open_in_popup"
+                            string="Mở popup (new)"
+                            type="object"/>
+                    <button name="action_open_list_same_class"
+                            string="Cùng năm nhập học"
+                            type="object"/>
+                    <button name="action_open_new_student"
+                            string="Thêm học sinh mới"
+                            type="object"
+                            class="btn-primary"/>
+                </header>
                 <sheet>
-                    <group>
-                        <field name="student_code" readonly="1"/>
+                    <group string="Thông tin cá nhân">
                         <field name="name"/>
-                        <field name="age"/>
+                        <field name="dob"/>
                         <field name="gender"/>
                         <field name="email"/>
-                        <field name="address"/>
                         <field name="phone"/>
+                        <field name="address"/>
                     </group>
+                    <group string="Thông tin học sinh">
+                        <field name="student_code" readonly="1"/>
+                        <field name="age"/>
+                        <field name="enroll_date"/>
+                    </group>
+                    <field name="note"/>
                 </sheet>
                 <chatter/>
             </form>
