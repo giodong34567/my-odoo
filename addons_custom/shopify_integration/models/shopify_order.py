@@ -53,8 +53,21 @@ class OrderImport(ShopifyAPIMixin):
             try:
                 shopify_order_id = str(order['id'])
 
-                if self._env['sale.order'].search([('shopify_order_id', '=', shopify_order_id)], limit=1):
-                    skipped += 1
+                existing = self._env['sale.order'].search(
+                    [('shopify_order_id', '=', shopify_order_id)], limit=1
+                )
+                if existing:
+                    # Nếu đã tồn tại nhưng chưa có lines (lần trước sync lỗi),
+                    # thử tạo lines lại thay vì skip hoàn toàn
+                    if existing.state == 'draft' and not existing.order_line:
+                        has_lines = self._create_lines(existing, order)
+                        if has_lines:
+                            existing.action_confirm()
+                            created += 1
+                        else:
+                            skipped += 1
+                    else:
+                        skipped += 1
                     continue
 
                 partner = self._get_or_create_partner(order)
@@ -70,6 +83,9 @@ class OrderImport(ShopifyAPIMixin):
                 has_lines = self._create_lines(so, order)
                 if has_lines:
                     so.action_confirm()
+                else:
+                    # Tạo order nhưng không có lines — vẫn ghi nhận để retry sau
+                    _logger.warning('Order %s created with no lines — products may not be synced yet.', shopify_order_id)
 
                 created += 1
 

@@ -7,18 +7,18 @@
             <form>
                 <header>
                     <button name="action_test_connection" type="object"
-                            string="Test Connection" class="btn-primary"/>
+                            string="Kiểm tra kết nối" class="btn-primary"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
-                        <h1><field name="name" placeholder="Store Name"/></h1>
+                        <h1><field name="name" placeholder="Tên cửa hàng"/></h1>
                     </div>
                     <group>
-                        <group string="Connection">
+                        <group string="Kết nối">
                             <field name="shop_url" placeholder="https://my-store.myshopify.com"/>
                             <field name="access_token" password="True"/>
                         </group>
-                        <group string="Settings">
+                        <group string="Cài đặt">
                             <field name="warehouse_id"/>
                             <field name="last_sync" readonly="1"/>
                             <field name="active"/>
@@ -45,7 +45,7 @@
     </record>
 
     <record id="action_shopify_config" model="ir.actions.act_window">
-        <field name="name">Shopify Stores</field>
+        <field name="name">Cấu hình cửa hàng Shopify</field>
         <field name="res_model">shopify.config</field>
         <field name="view_mode">list,form</field>
     </record>

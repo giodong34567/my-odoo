@@ -1,4 +1,6 @@
+import base64
 import logging
+import requests
 from odoo import models, fields
 from .shopify_mixin import ShopifyAPIMixin
 
@@ -71,6 +73,11 @@ class ProductSync(ShopifyAPIMixin):
             'shopify_id': shopify_id,
         }
 
+        # Lấy ảnh chính từ images[0] hoặc image
+        image_b64 = self._fetch_image(data)
+        if image_b64:
+            vals['image_1920'] = image_b64
+
         tmpl = self._env['product.template'].search([('shopify_id', '=', shopify_id)], limit=1)
         if tmpl:
             tmpl.write(vals)
@@ -83,6 +90,29 @@ class ProductSync(ShopifyAPIMixin):
             self._upsert_variant(variant, tmpl)
 
         return created, updated
+
+    def _fetch_image(self, data):
+        """Download ảnh chính của sản phẩm từ Shopify, trả về base64 hoặc None."""
+        # Shopify trả về 'image' (object) hoặc 'images' (list)
+        image_obj = data.get('image') or {}
+        src = image_obj.get('src')
+
+        if not src:
+            images = data.get('images') or []
+            if images:
+                src = images[0].get('src')
+
+        if not src:
+            return None
+
+        try:
+            resp = requests.get(src, timeout=15)
+            if resp.ok:
+                return base64.b64encode(resp.content).decode('utf-8')
+        except Exception as exc:
+            _logger.warning('Could not download product image %s: %s', src, exc)
+
+        return None
 
     def _upsert_variant(self, data, tmpl):
         shopify_variant_id = str(data['id'])

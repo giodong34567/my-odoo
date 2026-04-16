@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Top-level app menu (appears in sidebar) -->
+    <!-- Menu chính trên sidebar -->
     <menuitem id="menu_shopify_root"
               name="Shopify"
               web_icon="shopify_integration,static/description/icon.png"
               sequence="90"/>
 
-    <!-- Stores -->
     <menuitem id="menu_shopify_config"
-              name="Stores"
+              name="Cấu hình cửa hàng"
               parent="menu_shopify_root"
               action="shopify_integration.action_shopify_config"
               sequence="10"
               groups="shopify_integration.group_shopify_manager"/>
 
-    <!-- Sync Logs -->
     <menuitem id="menu_shopify_sync_log"
-              name="Sync Logs"
+              name="Nhật ký đồng bộ"
               parent="menu_shopify_root"
               action="shopify_integration.action_shopify_sync_log"
               sequence="20"
               groups="shopify_integration.group_shopify_user"/>
 
-    <!-- Manual Sync -->
     <menuitem id="menu_shopify_manual_sync"
-              name="Manual Sync"
+              name="Đồng bộ thủ công"
               parent="menu_shopify_root"
               action="shopify_integration.action_shopify_sync_wizard"
               sequence="30"

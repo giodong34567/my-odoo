@@ -78,6 +78,20 @@ class ShopifyConfig(models.Model):
                     'message': str(exc),
                 })
 
+    def action_sync_inventory(self):
+        """Entry point for the inventory sync cron."""
+        for config in self.search([('active', '=', True)]):
+            try:
+                config._run_inventory_sync()
+            except Exception as exc:
+                _logger.error('Inventory sync failed for %s: %s', config.name, exc)
+                self.env['shopify.sync.log'].create({
+                    'config_id': config.id,
+                    'sync_type': 'inventory',
+                    'status': 'failed',
+                    'message': str(exc),
+                })
+
     def _run_product_sync(self):
         from .shopify_product import ProductSync
         return ProductSync(self).run()
@@ -85,6 +99,10 @@ class ShopifyConfig(models.Model):
     def _run_order_import(self, date_from=None, date_to=None):
         from .shopify_order import OrderImport
         return OrderImport(self).run(date_from=date_from, date_to=date_to)
+
+    def _run_inventory_sync(self):
+        from .shopify_inventory import InventorySync
+        return InventorySync(self).run()
 
 
 class _ShopifyTest(ShopifyAPIMixin):
