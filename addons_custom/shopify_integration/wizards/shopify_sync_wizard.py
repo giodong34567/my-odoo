@@ -10,11 +10,11 @@ class ShopifySyncWizard(models.TransientModel):
 
     config_id = fields.Many2one('shopify.config', string='Store', required=True)
     sync_type = fields.Selection([
-        ('products', 'Products'),
-        ('inventory', 'Inventory'),
-        ('orders', 'Orders'),
-        ('all', 'All'),
-    ], string='Sync Type', required=True, default='products')
+        ('products', 'Sản phẩm'),
+        ('inventory', 'Tồn kho'),
+        ('orders', 'Đơn hàng'),
+        ('all', 'Tất cả'),
+    ], string='Loại đồng bộ', required=True, default='products')
     date_from = fields.Datetime(string='Orders From')
     date_to = fields.Datetime(string='Orders To')
     result_summary = fields.Text(string='Result', readonly=True)
@@ -41,7 +41,11 @@ class ShopifySyncWizard(models.TransientModel):
                 )
 
             if self.sync_type == 'inventory':
-                parts.append(_('Inventory sync is not yet implemented.'))
+                r = self.config_id._run_inventory_sync()
+                parts.append(
+                    _('Tồn kho — cập nhật: %s, bỏ qua: %s, lỗi: %s')
+                    % (r['updated'], r['skipped'], len(r['errors']))
+                )
 
         except Exception as exc:
             _logger.error('SyncWizard error: %s', exc)

@@ -7,7 +7,7 @@ from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 _DEFAULT_RETRY_SLEEP = 2
-_API_VERSION = '2023-10'
+_API_VERSION = '2026-04'
 
 
 class ShopifyAPIMixin:

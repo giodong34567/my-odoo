@@ -6,27 +6,27 @@
         <field name="arch" type="xml">
             <form>
                 <group>
-                    <field name="config_id"/>
-                    <field name="sync_type"/>
-                    <field name="date_from"
+                    <field name="config_id" string="Cửa hàng"/>
+                    <field name="sync_type" string="Loại đồng bộ"/>
+                    <field name="date_from" string="Từ ngày"
                            invisible="sync_type not in ['orders', 'all']"/>
-                    <field name="date_to"
+                    <field name="date_to" string="Đến ngày"
                            invisible="sync_type not in ['orders', 'all']"/>
                 </group>
-                <group string="Result" invisible="not result_summary">
+                <group string="Kết quả" invisible="not result_summary">
                     <field name="result_summary" nolabel="1"/>
                 </group>
                 <footer>
                     <button name="action_run_sync" type="object"
-                            string="Run Sync" class="btn-primary"/>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                            string="Chạy đồng bộ" class="btn-primary"/>
+                    <button string="Đóng" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
 
     <record id="action_shopify_sync_wizard" model="ir.actions.act_window">
-        <field name="name">Manual Sync</field>
+        <field name="name">Đồng bộ thủ công</field>
         <field name="res_model">shopify.sync.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
